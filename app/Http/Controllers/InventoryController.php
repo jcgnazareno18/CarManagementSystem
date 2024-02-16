@@ -2,24 +2,74 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Dealer;
 use App\Models\Inventory;
+use App\Models\MyModel;
 use App\Models\Purchase;
-use Hamcrest\Core\HasToString;
+use App\Models\User;
+use App\Models\Vehicle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use function Laravel\Prompts\alert;
 
 class InventoryController extends Controller
 {
 
+   
+
+    public function storeCar(Request $request){
+
+        if ($request->hasFile('image')) {
+            // Upload image
+            $image = $request->file('image');
+            $imageName = time().'.'.$image->extension();
+            $image->storeAs('carscontainer', $imageName, 'public'); // Adjust the storage path as needed
+        }
+    // Validate the request data
+    $validator = Validator::make($request->all(), [
+        'model_id' => 'required',
+        'dealer_id' => 'required',
+        'price' => 'required',
+    ]);
+
+    // Generate a VIN (Vehicle Identification Number)
+    $vin = $this->generateVin(); // Assuming generateVin() is a method to generate a unique VIN
+   
+
+   
+    $createdCar = Vehicle::create([
+        'vin' => $vin,
+        'model_id' => $request->model_id,
+        'dealer_id' => $request->dealer_id,
+        'price' => $request->price,
+        'image' => $imageName, // Store the image file name instead of the file object
+    ]);
+
+    Inventory::create([
+        "vehicle_id" => $createdCar->vehicle_id
+    ]);
+
+    return redirect()->route('cars');
+    }
+
+
     
 
-    public function index(){
+    private function generateVin() {
+        // Generate a random string (assuming VIN format and length)
+        return Str::random(17); // Adjust the length as needed based on VIN format
+    }
+
+    
+
+    public function dashboard(){
 
         $cars = DB::table('inventories')
         ->join('vehicles', 'inventories.vehicle_id', '=', 'vehicles.vehicle_id')
-        ->join('dealers', 'vehicles.dealer_id', '=', 'dealers.dealer_id')
+        ->join('users', 'vehicles.dealer_id', '=', 'users.id')
         ->join('models', 'vehicles.model_id', '=', 'models.model_id')
         ->join('options', 'models.option_id', '=', 'options.option_id')
         ->join('brands', 'models.brand_id', '=', 'brands.brand_id')
@@ -28,11 +78,12 @@ class InventoryController extends Controller
             'models.name as model_name',
             'models.body_style',
             'vehicles.price',
+            'vehicles.image',
             'options.color',
             'options.transmission',
             'options.engine',
              DB::raw('brands.name as brand_name'),
-             DB::raw('dealers.name as dealer_name'),
+            
         )
         ->get();
 
@@ -40,8 +91,7 @@ class InventoryController extends Controller
         $purchaseLength = count($purchases);
     
             
-
-        return view('welcome',compact("cars",'purchaseLength'));
+        return view('pages.dashboard',compact("cars",'purchaseLength'));
     }
 
 
@@ -60,6 +110,7 @@ class InventoryController extends Controller
         'models.name as model_name',
         'models.body_style',
         'vehicles.price',
+        'vehicles.image',
         'vehicles.vin',
         'options.color',
         'options.transmission',
@@ -81,6 +132,7 @@ class InventoryController extends Controller
         'models.name as model_name',
         'models.body_style',
         'vehicles.price',
+        'vehicles.image',
         'vehicles.vin',
         'options.color',
         'options.transmission',
@@ -104,30 +156,11 @@ class InventoryController extends Controller
     }
 
 
-    public function delearsView() {
+    public function cars() {
+        $models = MyModel::all();
+        $dealers = User::where('role', 'dealer')->get();
 
-        $dealers_view = DB::table('purchases')
-        ->join('inventories', 'purchases.inventory_id', '=', 'inventories.inventory_id')
-        ->join('vehicles', 'inventories.vehicle_id', '=', 'vehicles.vehicle_id')
-        ->join('dealers', 'vehicles.dealer_id', '=', 'dealers.dealer_id')
-        ->groupBy('dealers.name')
-        ->orderByDesc('purchase_count')
-        ->limit(3)
-        ->select(
-            'dealers.name',
-            DB::raw('COUNT(*) as purchase_count'),
-            DB::raw('SUM(vehicles.price) as total_amount')
-        )
-        ->get();
-    
-    
-
-        $purchases= Purchase::all();
-        $purchaseLength = count($purchases);
-    
-            
-
-        return view('pages.dealersView',compact("dealers_view",'purchaseLength'));
+        return view('pages.cars',compact('models','dealers'));
         
     }
 

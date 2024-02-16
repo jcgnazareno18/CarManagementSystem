@@ -33,11 +33,7 @@
                             </ul>
                         </li>
                     </ul>
-                    <a class="btn btn-outline-dark" href="{{ route('purchasedCars') }}">
-                            <i class="bi-cart-fill me-1"></i>
-                            Purchased Cars
-                            <span class="badge bg-dark text-white ms-1 rounded-pill">{{$purchaseLength}}</span>
-                        </a>
+                    
                 </div>
             </div>
         </nav>
@@ -45,7 +41,7 @@
         <section class="py-5">
             <div class="container px-4 px-lg-5 my-5">
                 <div class="row gx-4 gx-lg-5 align-items-center">
-                    <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="/assets/mustang.png" alt="..." /></div>
+                    <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="{{ asset('storage/carscontainer/' . $car->image) }}" alt="..." /></div>
                     <div class="col-md-6">
                         <div class="small mb-1">{{$car->vin}}</div>
                         <h1 class="display-5 fw-bolder">{{$car->model_name}}</h1>
@@ -63,15 +59,12 @@
                         </div>
                         <div class="d-flex">
 
-                            <form action="{{route('car.purchase')}}" method="POST">
-                                @csrf
-                            <input type="hidden" value="1" name="customer_id">
-                            <input type="hidden" value="{{$car->inventory_id}}" name="inventory_id">
-                            <button type="submit" class="btn btn-outline-dark flex-shrink-0" href="" type="button">
+                           
+                            <a type="submit" class="btn btn-outline-dark flex-shrink-0" href="{{ route('customerform',['id' => $car->inventory_id]) }}"type="button">
                                 <i class="bi-cart-fill me-1"></i>
-                                Puchase Car
-                            </button>
-                            </form>
+                                Reserve Car
+                            </a>
+                          
                         </div>
                     </div>
                 </div>
@@ -92,7 +85,7 @@
                 <div class="col mb-5">
                         <div class="card h-100">
                             <!-- Product image-->
-                            <img class="card-img-top border" src="/assets/mustang.png" alt="..." />
+                            <img height="180" class="card-img-top mb-5 mb-md-0" src="{{ asset('storage/carscontainer/' . $car_data->image) }}" alt="..." />
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
@@ -105,7 +98,7 @@
                             </div>
                             <!-- Product actions-->
                             <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                                <div class="text-center"><a class="btn btn-outline-dark mt-auto"href="{{ route('cardetial',['id' => $car_data->inventory_id]) }}">View options</a></div>
+                                <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="{{ route('cardetial',['id' => $car_data->inventory_id]) }}">View options</a></div>
                             </div>
                         </div>
                     </div>

@@ -18,10 +18,10 @@ return new class extends Migration
             $table->unsignedBigInteger("model_id");
             $table->unsignedBigInteger("dealer_id");
             $table->integer("price");
+            $table->string("image");
             $table->timestamps();
             $table->foreign("model_id")->references("model_id")->on('models')->onDelete('cascade');
-            $table->foreign("dealer_id")->references("dealer_id")->on('dealers')->onDelete('cascade');
-    
+            $table->foreign("dealer_id")->references("id")->on('users')->onDelete('cascade');
         });
     }
 

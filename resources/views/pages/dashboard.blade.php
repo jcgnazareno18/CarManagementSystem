@@ -21,62 +21,61 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{route('home')}}">Home</a></li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                <li><a class="dropdown-item" href="#!">All Products</a></li>
-                                <li><hr class="dropdown-divider" /></li>
-                                <li><a class="dropdown-item" href="#!">Popular Items</a></li>
-                                <li><a class="dropdown-item" href="#!">New Arrivals</a></li>
-                            </ul>
-                        </li>
+                      
+                        <li class="nav-item"><a class="nav-link" href="{{route('cars')}}">Cars</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{route('dealers')}}">Dealers</a></li>
+                        
                     </ul>
-                    
-                        <a class="btn btn-outline-dark" href="{{ route('purchasedCars') }}">
-                            <i class="bi-cart-fill me-1"></i>
-                            Purchased Cars
-                            <span class="badge bg-dark text-white ms-1 rounded-pill">{{$purchaseLength}}</span>
-                        </a>
-                
+                    <a class="btn btn-outline-dark" href="{{ route('logout') }}">
+                            Logout
+                           
+                     </a>
                 </div>
             </div>
         </nav>
         <!-- Header-->
 
 
-
+        <header class="bg-dark py-5">
+            <div class="container px-4 px-lg-5 my-5">
+                <div class="text-center text-white">
+                    <h1 class="display-4 fw-bolder">Unleashing Power and Performance</h1>
+                    <p class="lead fw-normal text-white-50 mb-0">A Comprehensive Guide to High-Performance Cars</p>
+                </div>
+            </div>
+        </header>
         <!-- Section-->
         <section class="py-5">
           
-            <div class="container px-4 px-lg-5">
-            <h3 class="mb-5">Top 3 Dealers</h3>
+            <div class="container px-4">
+            <h3 class="mb-5">Available Cars</h3>
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     
 
                
                 
-                @foreach($dealers_view as $car)
+                @foreach($cars as $car)
 
                 <div class="col mb-5">
                         <div class="card h-100">
                             <!-- Product image-->
-                            <img class="card-img-top border" src="/assets/mustang.png" alt="..." />
+                            <img height="180" src="{{ asset('storage/carscontainer/' . $car->image) }}" alt="Image">
                             <!-- Product details-->
                             <div class="card-body p-4">
                                 <div class="text-center">
                                     <!-- Product name-->
-                                    <h5 class="fw-bolder">{{$car->name}}</h5>
+                                    <h5 class="fw-bolder">{{$car->model_name}}</h5>
                                     <!-- Prod   uct price-->
-
-                                    <div class="d-flex flex-column">
-                                    <span>Number of Cars sold: {{$car->purchase_count}}</span>
-                                    <span> Total Sales: ${{$car->total_amount}}</span>
-                                    </div>
+                                    <span>${{$car->price}}</span>
+                                        
                                 </div>
                             </div>
                             <!-- Product actions-->
-                           
+                            <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                                <div class="text-center">
+                                    <a  class="btn btn-outline-dark mt-auto" href="{{ route('cardetial',['id' => $car->inventory_id]) }}">View options</a>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     
