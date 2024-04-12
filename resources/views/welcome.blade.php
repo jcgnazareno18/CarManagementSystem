@@ -21,7 +21,7 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="#!">Home</a></li>
+                        <li class="nav-item"><a class="nav-link active" aria-current="page" href="{{ route('home')}}">Home</a></li>
                         <li class="nav-item dropdown">
                             <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Shop</a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -108,12 +108,37 @@
         <!-- Section-->
         <section class="py-5">
           
+       
+               
             <div class="container px-4">
             <h3 class="mb-5">Available Cars</h3>
+
+
+           
+            <form class="d-flex align-items-center gap-3 mb-5" method="GET" action="{{ route('home') }}"  id="filterForm">
+
+                    <select class="form-select w-25" name="brand">
+                        <option value="">Select Brand</option>
+                        <option value="Toyota">Toyota</option>
+                        <option value="Ford">Ford</option>
+                        <option value="Tesla">Tesla</option>
+                        <option value="BMW">BMW</option>
+                       
+                    </select>
+
+                    <select class="form-select w-25" name="color">
+                        <option value="">Select Color</option>
+                        <option value="white">White</option>
+                        <option value="black">Black</option>
+                        <option value="red">Red</option>
+                      
+                    </select>
+                    <button class="btn btn-success " type="submit">Filter</button>
+                </form>
                 <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
                     
 
-               
+
                 
                 @foreach($cars as $car)
 

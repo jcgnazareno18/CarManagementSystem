@@ -92,25 +92,39 @@ Route::middleware('guest')->group(function () {
     
 
             
-                Route::get('/', function () {
-                    $cars = DB::table('inventories')
-                    ->join('vehicles', 'inventories.vehicle_id', '=', 'vehicles.vehicle_id')
-                    ->join('users', 'vehicles.dealer_id', '=', 'users.id')
-                    ->join('models', 'vehicles.model_id', '=', 'models.model_id')
-                    ->join('options', 'models.option_id', '=', 'options.option_id')
-                    ->join('brands', 'models.brand_id', '=', 'brands.brand_id')
-                    ->select(
-                        "inventories.inventory_id",
-                        'models.name as model_name',
-                        'models.body_style',
-                        'vehicles.price',
-                        'vehicles.image',
-                        'options.color',
-                        'options.transmission',
-                        'options.engine',
-                        DB::raw('brands.name as brand_name'),
-                    )
-                    ->get();
+    Route::get('/', function (Request $request) {
+
+
+        $carsQuery = DB::table('inventories')
+        ->join('vehicles', 'inventories.vehicle_id', '=', 'vehicles.vehicle_id')
+        ->join('users', 'vehicles.dealer_id', '=', 'users.id')
+        ->join('models', 'vehicles.model_id', '=', 'models.model_id')
+        ->join('options', 'models.option_id', '=', 'options.option_id')
+        ->join('brands', 'models.brand_id', '=', 'brands.brand_id')
+        ->select(
+            "inventories.inventory_id",
+            'models.name as model_name',
+            'models.body_style',
+            'vehicles.price',
+            'vehicles.image',
+            'options.color',
+            'options.transmission',
+            'options.engine',
+            DB::raw('brands.name as brand_name'),
+        );
+    
+    if ($request->color != "") {
+        $color = $request->input('color');
+        $carsQuery->where('options.color', $color);
+    }
+    
+    if ($request->brand != "") {
+        $brand = $request->input('brand');
+        $carsQuery->where('brands.name', $brand);
+    }
+    
+    $cars = $carsQuery->get();
+    
 
                     $topCars = DB::table('purchases')
                     ->join('inventories', 'purchases.inventory_id', '=', 'inventories.inventory_id')
@@ -139,6 +153,9 @@ Route::middleware('guest')->group(function () {
 
 
                     return view('welcome',compact('cars','topCars'));
+
+
+
                 })->name("home");
 
    
@@ -165,13 +182,15 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function() {
 
-
-    Route::get('/dealers',function(){
-        return view("pages.dealers");
-    })->name("dealers");
     Route::controller(AuthController::class)->group(function() {
         Route::post('register', 'registerSave')->name('register.save');
     });
+    
+    
+    Route::get('/dealers',function(){
+        return view("pages.dealers");
+    })->name("dealers");
+    
     
 
    
@@ -185,6 +204,8 @@ Route::post('/storeCar',[InventoryController::class,"storeCar"])->name("storeCar
 
 
 });
+
+
 
 
 
